@@ -56,9 +56,6 @@ module.exports = {
   mocha: {
     timeout: 200000,
   },
-  etherscan: {
-    apiKey: `${process.env.BSCSCAN_API_KEY}`,
-  },
   abiExporter: {
     path: "./abi",
     clear: true,

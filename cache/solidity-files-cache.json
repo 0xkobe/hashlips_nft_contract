@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/admin/Documents/workspace/monkey/hashlips_nft_contract/contract/SimpleNft.sol": {
-      "lastModificationDate": 1634786972423,
-      "contentHash": "e82a86de240c347243955a74df69e1cc",
+      "lastModificationDate": 1634834323094,
+      "contentHash": "783f9070ef755f9f70d50bc370e47e5d",
       "sourceName": "contract/SimpleNft.sol",
       "solcConfig": {
         "version": "0.8.0",

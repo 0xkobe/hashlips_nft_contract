@@ -6,7 +6,7 @@ main = async () => {
     console.log("Deployer address = ", deployer.address);
 
     const NFT = await ethers.getContractFactory("NFT");
-    const nft = await NFT.deploy("Simple NFT", "sNFT", "", "");
+    const nft = await NFT.deploy("CryptoMonkey Empire Guild Banners", "CMEGB", "https://gateway.pinata.cloud/ipfs/QmQTB6SJmfWev1JxsjmVSZMsuV9t4kmHTBGVUFqciEmdpQ/", "");
     await nft.deployed();
     console.log("NFT deployed at", nft.address);
 };
