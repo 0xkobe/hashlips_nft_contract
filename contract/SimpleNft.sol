@@ -16,6 +16,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract NFT is ERC721Enumerable, Ownable {
@@ -27,17 +28,16 @@ contract NFT is ERC721Enumerable, Ownable {
     uint256 public maxSupply = 1600;
     uint256 public maxMintAmount = 20;
     bool public paused = false;
-    bool public revealed = false;
-    string public notRevealedUri;
+    address public oldNftAddr;
 
     constructor(
         string memory _name,
         string memory _symbol,
         string memory _initBaseURI,
-        string memory _initNotRevealedUri
+        address _oldNftAddr
     ) ERC721(_name, _symbol) {
         setBaseURI(_initBaseURI);
-        setNotRevealedURI(_initNotRevealedUri);
+        setOldNftAddress(_oldNftAddr);
     }
 
     // internal
@@ -60,6 +60,19 @@ contract NFT is ERC721Enumerable, Ownable {
         for (uint256 i = 1; i <= _mintAmount; i++) {
             _safeMint(msg.sender, supply + i);
         }
+    }
+
+    // public
+    function claim(uint256 _tokenId) public {
+        IERC721(oldNftAddr).safeTransferFrom(
+            msg.sender,
+            address(this),
+            _tokenId
+        );
+        uint256 supply = totalSupply();
+        require(!paused);
+        require(supply + 1 <= maxSupply);
+        _safeMint(msg.sender, supply + 1);
     }
 
     function walletOfOwner(address _owner)
@@ -87,10 +100,6 @@ contract NFT is ERC721Enumerable, Ownable {
             "ERC721Metadata: URI query for nonexistent token"
         );
 
-        if (revealed == false) {
-            return notRevealedUri;
-        }
-
         string memory currentBaseURI = _baseURI();
         return
             bytes(currentBaseURI).length > 0
@@ -104,21 +113,12 @@ contract NFT is ERC721Enumerable, Ownable {
                 : "";
     }
 
-    //only owner
-    function reveal() public onlyOwner {
-        revealed = true;
-    }
-
     function setCost(uint256 _newCost) public onlyOwner {
         cost = _newCost;
     }
 
     function setmaxMintAmount(uint256 _newmaxMintAmount) public onlyOwner {
         maxMintAmount = _newmaxMintAmount;
-    }
-
-    function setNotRevealedURI(string memory _notRevealedURI) public onlyOwner {
-        notRevealedUri = _notRevealedURI;
     }
 
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
@@ -130,6 +130,10 @@ contract NFT is ERC721Enumerable, Ownable {
         onlyOwner
     {
         baseExtension = _newBaseExtension;
+    }
+
+    function setOldNftAddress(address _oldNftAddr) public onlyOwner {
+        oldNftAddr = _oldNftAddr;
     }
 
     function pause(bool _state) public onlyOwner {
